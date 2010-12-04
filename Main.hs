@@ -1,5 +1,6 @@
 module Main where
 
+import System.Info
 import Data.Bits
 import Graphics.UI.WX
 import Graphics.UI.WXCore
@@ -12,7 +13,8 @@ main = start gui
 
 gui :: IO ()
 gui = do
-    f <- frame []
+    f <- frame [text := "Protein Secondary Structure Alignment Tool",
+                style := (frameDefaultStyle .|. wxMAXIMIZE)]
     html_window <- htmlWindowCreate f 1 (Rect 0 0 100 300) 5 "Output Window"
     html_contents <- varCreate (["",""],["",""])
     let start_html = "<h2>Welcome</h2><p>Paste your PSIPRED output into the boxes, then press Align to get started.</p>"
@@ -96,11 +98,9 @@ gui = do
                                            floatCenter (row 1 [(widget save_type),
                                                                (widget save)])
                                            ]
-                                        ]],
-           text := "Protein Secondary Structure Alignment Tool",
-           style := (frameDefaultStyle .|. wxMAXIMIZE)
+                                        ]]
            ]
 
-    frameShowFullScreen f True 0
+    frameShowFullScreen f (os == "windows") 0
     
     return ()
