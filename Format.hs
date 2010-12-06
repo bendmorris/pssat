@@ -50,7 +50,7 @@ img_rep :: String -> String -> Char -> String
 img_rep a [] p = []
 img_rep [] b p = []
 img_rep a b p = "\n<td width='24'>" ++ image_for_char (same_or_nothing (head a) (head b)) p n ++ 
-                "</td>" ++ img_rep (tail a) (tail b) (head a)
+                "</td>" ++ img_rep (tail a) (tail b) (same_or_nothing (head a) (head b))
                     where n = case (length a > 1) of
                                 True -> same_or_nothing (head $ tail $ a) (head $ tail $ b)
                                 False -> ' '
