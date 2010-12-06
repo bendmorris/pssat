@@ -10,7 +10,9 @@ indel = -50
 newgap = -1000
 
 -- match score for aligning chars a and b
-match_score a b = if a == b then match else mismatch
+match_score a b | a == b = match 
+                | (a == 'C' || b == 'C') && not (a == 'C' && b == 'C') = div match 2
+                | otherwise = mismatch
 
 {- align: returns aligned strings, aligned amino acid sequences, and score
    v and w are sequences, in the format ["2ndary struct.", 
@@ -45,7 +47,10 @@ align v w local = if v == w then ([sequence1, sequence1], [aminoacids1, aminoaci
                         match 0 y = 0
                         match x y = (x - 1 /@ y - 1) + 
                                     (match_score (sequence1 !! (x - 1)) (sequence2 !! (y - 1)) * 
-                                     confidence1 !! (x - 1) * confidence2 !! (y - 1)) `div` 10
+                                     maximum ([1, 
+                                               confidence1 !! (x - 1) * confidence2 !! (y - 1)
+                                               ])) 
+                                     `div` 10
                         
                         -- isxgap and isygap returns True if the score in position (x, y) was
                         -- determined by inserting a gap in the 1st (isxgap) or 2nd (isygap) sequence
