@@ -38,7 +38,7 @@ same_or_nothing a b | a == '-'          = b
                     | otherwise         = ' '
 image :: Char -> String
 image 'H' = "helix"
-image 'E' = "fold"
+image 'E' = "sheet"
 image _ = ""
 -- returns the HTML of the image for a character, taking into account the previous/next characters
 image_for_char :: Char -> Char -> Char -> String
