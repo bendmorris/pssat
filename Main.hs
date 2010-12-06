@@ -101,6 +101,6 @@ gui = do
                                         ]]
            ]
 
-    frameShowFullScreen f (os == "windows") 0
+    frameShowFullScreen f (os == "windows" || os == "mingw32") 0
     
     return ()
