@@ -21,14 +21,16 @@ alignment_text ([a, b], [c, d]) = case (length a > row_length || length b > row_
                                                             [(right c row_length),
                                                              (right d row_length)])
                                     False -> a ++ "\n" ++ b ++ "\n"
--- format a character as HTML, with or without additional formatting
+-- character with appropriate font tags
 font_html :: Char -> Bool -> String
 font_html a False = "<font color='grey'>" ++ [a] ++ "</font>"
 font_html 'E' True = "<font color='green'><b>E</b></font>"
 font_html 'H' True = "<font color='blue'><b>H</b></font>"
 font_html 'C' True = "<font color='red'>C</font>"
 font_html _ True = "<font color='black'>-</font>"
+-- single character as HTML
 format_char_html a b = "\n<td width='24'><center>" ++ font_html a b ++ "</center></td>"
+-- if one character is a gap, returns the other character; if mismatched, return nothing
 same_or_nothing :: Char -> Char -> Char
 same_or_nothing a b | a == '-'          = b
                     | b == '-'          = a
@@ -38,6 +40,7 @@ image :: Char -> String
 image 'H' = "helix"
 image 'E' = "fold"
 image _ = ""
+-- returns the HTML of the image for a character, taking into account the previous/next characters
 image_for_char :: Char -> Char -> Char -> String
 image_for_char a p n = if continuous /= (False, False) && image a /= ""
                        then "<img src='" ++ (image a) ++ imagenum ++ ".png'/>" else ""
@@ -46,6 +49,7 @@ image_for_char a p n = if continuous /= (False, False) && image a /= ""
                                                 (True, True) -> "2"
                                                 (True, False) -> "3"
                                                 (False, True) -> "1"
+-- returns the HTML for the image above two aligned characters
 img_rep :: String -> String -> Char -> String
 img_rep a [] p = []
 img_rep [] b p = []
