@@ -30,12 +30,12 @@ font_html 'C' True = "<font color='red'>C</font>"
 font_html _ True = "<font color='black'>-</font>"
 -- single character as HTML
 format_char_html a b = "\n<td width='24'><center>" ++ font_html a b ++ "</center></td>"
--- if one character is a gap, returns the other character; if mismatched, return nothing
+-- if one character is a gap/coil, returns the other character; if mismatched, return nothing
 same_or_nothing :: Char -> Char -> Char
-same_or_nothing a b | a == '-'          = b
-                    | b == '-'          = a
-                    | a == b            = a
-                    | otherwise         = ' '
+same_or_nothing a b | a == '-' || a == 'C'  = b
+                    | b == '-' || b == 'C'  = a
+                    | a == b                = a
+                    | otherwise             = ' '
 image :: Char -> String
 image 'H' = "helix"
 image 'E' = "sheet"
