@@ -4,14 +4,15 @@ import Array
 import Data.List
 
 -- score matrix
-match = 50
-mismatch = -1000
-indel = -50
-newgap = -1000
+match, mismatch, indel, newgap :: Float
+match = 1
+mismatch = -5
+indel = -1
+newgap = -5
 
 -- match score for aligning chars a and b
 match_score a b | a == b = match 
-                | (a == 'C' || b == 'C') && not (a == 'C' && b == 'C') = div match 2
+                | (a == 'C' || b == 'C') && not (a == 'C' && b == 'C') = match / 2
                 | otherwise = mismatch
 
 {- align: returns aligned strings, aligned amino acid sequences, and score
@@ -27,8 +28,8 @@ align v w local = if v == w then ([sequence1, sequence1], [aminoacids1, aminoaci
                   else (alignment, align_aa)
                   where sequence1 = v !! 0
                         sequence2 = w !! 0
-                        confidence1 = [read [a] :: Int | a <- v !! 1]
-                        confidence2 = [read [b] :: Int | b <- w !! 1]
+                        confidence1 = [read [a] :: Float | a <- v !! 1]
+                        confidence2 = [read [b] :: Float | b <- w !! 1]
                         aminoacids1 = v !! 2
                         aminoacids2 = w !! 2
                         n = length sequence1
@@ -43,6 +44,7 @@ align v w local = if v == w then ([sequence1, sequence1], [aminoacids1, aminoaci
                         (/@) x y = scores!(x,y)
                         
                         -- match x y returns the match or mismatch score for position (x, y)
+                        match :: Int -> Int -> Float
                         match x 0 = 0
                         match 0 y = 0
                         match x y = (x - 1 /@ y - 1) + 
@@ -50,7 +52,7 @@ align v w local = if v == w then ([sequence1, sequence1], [aminoacids1, aminoaci
                                      maximum ([1, 
                                                confidence1 !! (x - 1) * confidence2 !! (y - 1)
                                                ])) 
-                                     `div` 10
+                                     / 100
                         
                         -- isxgap and isygap returns True if the score in position (x, y) was
                         -- determined by inserting a gap in the 1st (isxgap) or 2nd (isygap) sequence
@@ -59,7 +61,8 @@ align v w local = if v == w then ([sequence1, sequence1], [aminoacids1, aminoaci
                         isygap 0 y = False
                         isygap x y = (x /@ y == ((x - 1) /@ y) + indel) || (x /@ y == ((x - 1) /@ y) + newgap)                      
                       
-                        -- returns the optimal score for a given (x, y) position                      
+                        -- returns the optimal score for a given (x, y) position
+                        score :: Int -> Int -> Float
                         score 0 0 = 0                      
                         score 1 0 = maximum [newgap, if local then 0 else newgap]
                         score 0 1 = maximum [newgap, if local then 0 else newgap]
